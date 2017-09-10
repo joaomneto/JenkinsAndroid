@@ -1,0 +1,34 @@
+[ -z "$ANDROID_HOME" ] && echo "Please set the ANDROID_HOME variable" && exit 1;
+
+if [ $# -lt 2 ]; then
+    echo "Usage: loadAndroidEmulator <retries> <emulator load timeout (secs)>"
+    exit 1
+fi
+retries=0
+while [ "$retries" -le "$1" ]; do
+    echo "Starting Android emulator ($retries of $1)"
+    $ANDROID_HOME/sdk/tools/emulator -avd Jenkins_API_26 -no-audio  -accel on & 
+    SECONDS=0
+    loaded=0
+    while [ "$SECONDS" -le "$2" ]; do
+        echo "Waiting for Emulator to start. Time ellapsed $SECONDS secs...";
+        bootStatus=`$ANDROID_HOME/sdk/platform-tools/adb shell getprop sys.boot_completed`
+        if [ "$bootStatus" == "1" ]; then 
+            echo "Emulator has finished booting"; 
+            loaded=1;
+            break;
+        fi
+        sleep 1;
+    done
+    if [ "$loaded" -eq "1" ]; then
+        exit 0
+    fi
+    killall -KILL emulator64-crash-service
+    killall -KILL qemu-system-i386
+    echo "Timed out waiting for emulator"
+    sleep 5
+    let "retries=retries+1"
+done
+
+echo "Max retries reached. Exiting."
+exit 2
