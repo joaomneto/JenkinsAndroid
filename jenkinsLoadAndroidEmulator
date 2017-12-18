@@ -1,6 +1,8 @@
 [ -z "$ANDROID_HOME" ] && echo "Please set the ANDROID_HOME variable" && exit 1;
 
 
+
+
 if [ $# -lt 2 ]; then
     echo "Usage: loadAndroidEmulator <retries> <emulator load timeout (secs)>"
     exit 1
