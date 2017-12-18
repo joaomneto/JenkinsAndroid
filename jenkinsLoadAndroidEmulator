@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 if [ $# -lt 2 ]; then
     echo "Usage: loadAndroidEmulator <retries> <emulator load timeout (secs)>"
     exit 1
